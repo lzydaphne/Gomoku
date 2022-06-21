@@ -31,7 +31,7 @@ const int RANGE[8][2] = {
 
 std::vector<Point> move_list;
 
-const int weight[17] = {0, 100000, -1000000, 5000, -10000, 40, -10000, 40, -800, 20, -50, 20, -50, 1, -3, 1, -3};
+const int weight[17] = {0, 50000, -500000, 5000, -10000, 40, -10000, 40, -800, 20, -50, 20, -50, 1, -3, 1, -3};
 
 void move_list_init()
 {
@@ -93,7 +93,7 @@ void State::get_possible_actions(void)
 {
 
   std::vector<Point> actions;
-  Board bd; //單張棋盤
+  Board bd;
 
   if (actions.empty() && flag)
   {
@@ -761,7 +761,7 @@ void State::reverseBoard(Board boardA, Board &boardB)
 }
 
 //!AlphaBeta::eval minimaxAB 計算出分數
-int State::miniAlphaBeta(State *state, int depth, int alpha, int beta)
+int State::miniABprue(State *state, int depth, int alpha, int beta)
 {
   gameStatus nowState = (*state).game_state;
   if (nowState == FINISH)
@@ -792,7 +792,7 @@ int State::miniAlphaBeta(State *state, int depth, int alpha, int beta)
       State next_state(*state);
       next_state.board[move.x][move.y] = 3 - player;
 
-      int a = miniAlphaBeta(&next_state, depth - 1, alpha, beta);
+      int a = miniABprue(&next_state, depth - 1, alpha, beta);
       v = std::max(v, a);
       if (v > alpha)
         alpha = v;
@@ -814,7 +814,7 @@ int State::miniAlphaBeta(State *state, int depth, int alpha, int beta)
       State next_state(*state);
       next_state.board[move.x][move.y] = player;
       // sameBoard[P.pos[i].x][P.pos[i].y] = player; //模擬己方落子,不能用board,否則可能改變board
-      int a = miniAlphaBeta(&next_state, depth - 1, alpha, beta);
+      int a = miniABprue(&next_state, depth - 1, alpha, beta);
       // next_state.board[move.x][move.y] = C_NONE;
       v = std::min(v, a);
       if (v < beta)
@@ -827,7 +827,7 @@ int State::miniAlphaBeta(State *state, int depth, int alpha, int beta)
   }
 }
 
-Point getNextMove(State &state)
+Point getNextMove(State &state, int depth)
 {
   Point bestMove;
   int bestScore = -INF;
@@ -846,7 +846,7 @@ Point getNextMove(State &state)
 
     std::cout << "x , y " << move.x << " " << move.y << std::endl;
 
-    score = state.miniAlphaBeta(&next_state, DEPTH - 1, -INF, INF);
+    score = state.miniABprue(&next_state, depth - 1, -INF, INF);
     std::cout
         << "score: " << score << std::endl;
     // std::cout << "score: " << eval.score << std::endl;
@@ -898,7 +898,7 @@ void write_valid_spot(std::ofstream &fout, State &state, int player)
   // if (DEBUG)
   std::cout << "Initial Score: " << init_score << '\n';
 
-  Point move = getNextMove(state);
+  Point move = getNextMove(state, 4);
   if (DEBUG)
     std::cout << "Final Move: {" << move.x << "," << move.y << "}\n";
   fout << move.x << " " << move.y << '\n';

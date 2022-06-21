@@ -114,7 +114,7 @@ public:
   void reverseBoard(Board boardA, Board &boardB); //將A棋盤黑白子顛倒結果傳給B棋盤
   EVALUATION evaluate(Board board, State &state); //!對棋局board的黑子的局勢估值函數,還可以判斷輸贏
   EVALUATION evaluate(Board board);
-  int miniAlphaBeta(State *state, int depth, int alpha, int beta); //!極大極小搜索加ab剪枝
+  int miniABprue(State *state, int depth, int alpha, int beta); //!極大極小搜索加ab剪枝
 };
 
 #endif
