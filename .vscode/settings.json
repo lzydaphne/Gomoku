@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "array": "cpp",
+    "ctime": "cpp",
+    "vector": "cpp",
+    "bitset": "cpp"
+  }
+}
